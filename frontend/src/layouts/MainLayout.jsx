@@ -1,15 +1,21 @@
-// Main layout with sidebar & navbar (placeholder)
 import React from 'react';
+import { Outlet } from 'react-router-dom';
 import Navbar from '../components/common/Navbar';
 import Sidebar from '../components/common/Sidebar';
 
-export default function MainLayout({ children }) {
+/**
+ * 🎨 [Design UI] MainLayout.jsx
+ * Bingkai dengan Sidebar & Navbar untuk Dashboard dan menu utama
+ */
+export default function MainLayout() {
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <Navbar />
-        <main className="p-6 flex-1 overflow-y-auto">{children}</main>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#f8fafc' }}>
+      <Navbar />
+      <div style={{ display: 'flex', flex: 1 }}>
+        <Sidebar />
+        <main style={{ flex: 1, padding: '2rem', overflowY: 'auto' }}>
+          <Outlet />
+        </main>
       </div>
     </div>
   );
