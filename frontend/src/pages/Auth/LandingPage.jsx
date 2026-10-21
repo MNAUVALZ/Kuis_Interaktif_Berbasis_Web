@@ -1,754 +1,381 @@
-/* ==========================================================================
-   QuisZoors Landing Page Stylesheet
-   Matching exact design mockup with responsive layout and rich visual details
-   ========================================================================== */
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import './LandingPage.css';
 
-:root {
-  --qz-primary-red: #e52535;
-  --qz-primary-gold: #f5b324;
-  --qz-navy-bg: #0d1f3d;
-  --qz-navy-dark: #08142b;
-  --qz-green-btn-1: #6ed336;
-  --qz-green-btn-2: #48b724;
-  --qz-text-dark: #111827;
-  --qz-text-muted: #4b5563;
-}
+// ============================================================================
+// 📸 KONFIGURASI FOTO & GAMBAR (Bisa Anda ganti dengan mudah)
+// Letakkan file gambar Anda di folder: public/images/
+// Atau ganti URL di bawah ini dengan nama file gambar Anda sendiri.
+// ============================================================================
+const CONFIG_IMAGES = {
+  // 1. Foto Background Hero (Langit / Awan)
+  heroBg: '/images/hero-bg.jpg',
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+  // 2. 🟢 LOGO KIRI ATAS (NAVBAR):
+  // Ganti path file ini jika ingin ganti logo di kiri atas
+  logoNavbar: '/images/logo-transparent.png',
 
-body {
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  color: var(--qz-text-dark);
-  background-color: #ffffff;
-  overflow-x: hidden;
-}
+  // 3. 🟡 LOGO BESAR KANAN (HERO):
+  // Ganti path file ini jika ingin ganti logo besar di sisi kanan
+  logoHeroKanan: '/images/logo-transparent.png',
 
-/* Base Wrapper */
-.qz-landing {
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
+  // 4. Foto Ilustrasi / Preview Guru & Admin
+  educatorPreview: '/images/educator-preview.jpg',
 
-.qz-container {
-  width: 100%;
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: 0 24px;
-}
+  // 5. Foto Thumbnail Kartu Kelas
+  classThumbnail: '/images/class-placeholder.jpg',
+};
 
-/* ==========================================================================
-   1. HERO SECTION & NAVBAR
-   ========================================================================== */
-.qz-hero {
-  position: relative;
-  background-size: cover;
-  background-position: center top;
-  background-repeat: no-repeat;
-  padding-top: 16px;
-  padding-bottom: 100px;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
+// Data 4 Kartu "Our Class"
+const classList = [
+  {
+    id: 1,
+    tag: 'MATEMATIKA XII',
+    subtitle: 'Aljabar & Kalkulus',
+    desc: 'Latihan soal dan pembahasan interaktif untuk persiapan ujian akhir.',
+    image: CONFIG_IMAGES.classThumbnail,
+  },
+  {
+    id: 2,
+    tag: 'FISIKA XI',
+    subtitle: 'Mekanika & Gelombang',
+    desc: 'Eksplorasi konsep fisika dengan simulasi kuis yang menyenangkan.',
+    image: CONFIG_IMAGES.classThumbnail,
+  },
+  {
+    id: 3,
+    tag: 'BAHASA INGGRIS',
+    subtitle: 'Grammar & Vocabulary',
+    desc: 'Asah kemampuan reading, listening, dan kosa kata bahasa Inggris.',
+    image: CONFIG_IMAGES.classThumbnail,
+  },
+  {
+    id: 4,
+    tag: 'KIMIA XII',
+    subtitle: 'Stoikiometri & Reaksi',
+    desc: 'Pahami reaksi kimia dan hitungan mol melalui kuis terarah.',
+    image: CONFIG_IMAGES.classThumbnail,
+  },
+];
 
-/* Navbar */
-.qz-nav {
-  position: relative;
-  z-index: 20;
-  padding: 6px 0 10px 0;
-}
+function LandingPage() {
+  const [activeTab, setActiveTab] = useState('admin'); // 'admin' atau 'teacher'
+  const [menuOpen, setMenuOpen] = useState(false);
 
-.qz-nav-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
+  return (
+    <div className="qz-landing">
+      {/* ===================================================================
+          1. HERO SECTION (Atas)
+          Foto background dikontrol oleh CONFIG_IMAGES.heroBg
+      =================================================================== */}
+      <section
+        className="qz-hero"
+        style={{
+          backgroundImage: `linear-gradient(180deg, rgba(235, 245, 255, 0.3) 0%, rgba(255, 255, 255, 0.85) 75%, #ffffff 100%), url(${CONFIG_IMAGES.heroBg})`,
+        }}
+      >
+        {/* Navigation Bar */}
+        <header className="qz-nav">
+          <div className="qz-container qz-nav-inner">
+            <Link to="/" className="qz-logo" aria-label="QuisZoors Beranda">
+              {/* Gambar Logo Kiri Atas */}
+              <img src={CONFIG_IMAGES.logoNavbar} alt="QuisZoors" className="qz-nav-logo" />
+            </Link>
 
-.qz-logo {
-  display: inline-flex;
-  align-items: center;
-  text-decoration: none;
-  transform: translateX(-75px);
-  transition: transform 0.3s ease;
-}
+            <button
+              className="qz-mobile-toggle"
+              type="button"
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label="Toggle menu"
+            >
+              {menuOpen ? '✕' : '☰'}
+            </button>
 
-.qz-nav-logo {
-  height: 74px;
-  width: auto;
-  max-width: 260px;
-  object-fit: contain;
-  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.1));
-}
+            <nav className={`qz-nav-menu ${menuOpen ? 'qz-nav-menu--open' : ''}`}>
+              <a href="#features" onClick={() => setMenuOpen(false)}>Fitur</a>
+              <a href="#our-class" onClick={() => setMenuOpen(false)}>Our Class</a>
+              <a href="#about" onClick={() => setMenuOpen(false)}>Tentang Kami</a>
+              <Link to="/login" className="qz-nav-link-login" onClick={() => setMenuOpen(false)}>
+                Masuk
+              </Link>
+            </nav>
+          </div>
+        </header>
 
-.qz-logo:hover {
-  transform: translateX(-75px) scale(1.05);
-}
+        {/* Hero Main Content */}
+        <div className="qz-container qz-hero-grid">
+          {/* Kolom Kiri: Judul, Deskripsi, Tombol Hijau LOGIN */}
+          <div className="qz-hero-left">
+            <h1 className="qz-hero-title">
+              <span className="qz-title-black">Uji Pengetahuanmu</span>
+              <span className="qz-title-red">Raih Poinmu</span>
+              <span className="qz-title-black">Taklukkan Tantangannya!</span>
+            </h1>
 
-.qz-nav-menu {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-}
+            <p className="qz-hero-desc">
+              Selamat datang di QuisZoors, platform kuis interaktif yang dirancang
+              untuk menguji kemampuan, menambah wawasan, dan mengasah pola pikir
+              melalui berbagai tantangan menarik. Belajar tidak harus membosankan,
+              Temukan keseruan menjawab pertanyaan, kumpulkan skor, dan buktikan
+              kemampuanmu di setiap kuis!
+            </p>
 
-.qz-nav-menu a {
-  text-decoration: none;
-  color: #1f2937;
-  font-size: 14.5px;
-  font-weight: 600;
-  transition: color 0.2s ease;
-}
+            {/* 🟢 TOMBOL HIJAU LOGIN (Sesuai Permintaan) */}
+            <div className="qz-hero-action">
+              <Link
+                to="/login"
+                className="qz-green-login-btn"
+                title="Klik untuk Masuk ke Akun Anda"
+                id="hero-login-button"
+              >
+                <span className="qz-green-btn-glow" />
+                <span className="qz-green-btn-text">
+                  <svg className="qz-login-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M10 17l5-5-5-5v10zM4 19h10v2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h10v2H4v14z" />
+                  </svg>
+                  LOGIN
+                </span>
+              </Link>
+            </div>
+          </div>
 
-.qz-nav-menu a:hover {
-  color: var(--qz-primary-red);
-}
+          {/* Kolom Kanan: Gambar Lambang Besar QuisZoors dengan Animasi */}
+          <div className="qz-hero-right">
+            <div className="qz-emblem-wrapper">
+              {/* Sparkle Star */}
+              <div className="qz-sparkle-star">✦</div>
 
-.qz-nav-link-login {
-  background: rgba(255, 255, 255, 0.95);
-  padding: 6px 16px;
-  border-radius: 9999px;
-  border: 1.5px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-}
+              {/* Gambar Logo Besar Kanan */}
+              <img
+                src={CONFIG_IMAGES.logoHeroKanan}
+                alt="QuisZoors Logo"
+                className="qz-big-hero-logo"
+              />
+            </div>
+          </div>
+        </div>
 
-.qz-mobile-toggle {
-  display: none;
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #111827;
-}
+        {/* Gelombang Transisi ke Bagian Biru Navy */}
+        <div className="qz-wave-divider">
+          <svg viewBox="0 0 1440 200" fill="none" preserveAspectRatio="none">
+            <path
+              d="M0 60 C 380 180, 1020 0, 1440 100 L1440 200 L0 200 Z"
+              fill="#0d1f3d"
+            />
+          </svg>
+        </div>
+      </section>
 
-/* Hero Content Grid */
-.qz-hero-grid {
-  display: grid;
-  grid-template-columns: 1.12fr 0.88fr;
-  align-items: center;
-  gap: 28px;
-  position: relative;
-  z-index: 10;
-  margin-top: auto;
-  margin-bottom: auto;
-  width: 100%;
-}
+      {/* ===================================================================
+          2. NAVY SECTION (Fitur, Our Class, Let's find a way)
+      =================================================================== */}
+      <div className="qz-navy-wrapper">
+        {/* 3 ICON FITUR UTAMA */}
+        <section id="features" className="qz-container qz-features-row">
+          {/* Fitur 1: Quis Seru */}
+          <div className="qz-feature-item">
+            <div className="qz-feature-badge qz-badge-gold">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#f5b324" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="6" width="20" height="12" rx="4" />
+                <path d="M6 12h4m-2-2v4m7-2h.01m3 0h.01" />
+              </svg>
+            </div>
+            <h3 className="qz-feature-title">Quis Seru</h3>
+            <p className="qz-feature-desc">
+              Berbagai pertanyaan menarik dari berbagai kategori
+            </p>
+          </div>
 
-.qz-hero .qz-container {
-  max-width: 1420px;
-}
+          {/* Fitur 2: Scor Instan */}
+          <div className="qz-feature-item">
+            <div className="qz-feature-badge qz-badge-red">
+              <svg viewBox="0 0 24 24" fill="#e52535">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+              </svg>
+            </div>
+            <h3 className="qz-feature-title">Scor Instan</h3>
+            <p className="qz-feature-desc">
+              Lihat hasil dan skor kamu secara langsung
+            </p>
+          </div>
 
-/* Left Hero: Typography & Green Login Button */
-.qz-hero-left {
-  max-width: 860px;
-  transform: translateX(-75px);
-}
+          {/* Fitur 3: Papan Peringkat */}
+          <div className="qz-feature-item">
+            <div className="qz-feature-badge qz-badge-gold">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#f5b324" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2m12 6h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2M6 3h12v7a6 6 0 0 1-12 0V3z" />
+                <path d="M9 21h6m-3-7v7" />
+              </svg>
+            </div>
+            <h3 className="qz-feature-title">Papan Peringkat</h3>
+            <p className="qz-feature-desc">
+              Tentang teman dan bukti kamu yang terbaik!
+            </p>
+          </div>
+        </section>
 
-.qz-hero-title {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  font-size: clamp(44px, 5.8vw, 74px);
-  font-weight: 900;
-  font-style: italic;
-  line-height: 1.1;
-  letter-spacing: -0.5px;
-}
+        {/* -------------------------------------------------------------------
+            3. SECTION "OUR CLASS" (Box Biru Bergaris dengan 4 Kartu)
+        ------------------------------------------------------------------- */}
+        <section id="our-class" className="qz-container">
+          <div className="qz-class-box">
+            <div className="qz-class-header">
+              <h2 className="qz-class-heading">Our Class</h2>
+              <div className="qz-class-subtext">
+                <p>TEMUKAN MATERI KELAS PILIHAN</p>
+                <p>ASAH KEMAMPUAN BERSAMA TEMAN</p>
+              </div>
+            </div>
 
-.qz-title-black {
-  color: #0b1320;
-}
+            <div className="qz-class-grid">
+              {classList.map((item) => (
+                <div key={item.id} className="qz-card">
+                  {/* Bagian Atas Kartu: Teks & Tombol Panah */}
+                  <div className="qz-card-header">
+                    <div>
+                      <h4 className="qz-card-tag">{item.tag}</h4>
+                      <h5 className="qz-card-subtitle">{item.subtitle}</h5>
+                    </div>
+                    <Link
+                      to="/login"
+                      className="qz-card-arrow-btn"
+                      aria-label={`Buka kelas ${item.tag}`}
+                    >
+                      ↗
+                    </Link>
+                  </div>
 
-.qz-title-red {
-  color: var(--qz-primary-red);
-}
+                  <p className="qz-card-desc">{item.desc}</p>
 
-.qz-hero-desc {
-  margin-top: 16px;
-  font-size: 15px;
-  line-height: 1.6;
-  color: #374151;
-  font-weight: 450;
-  max-width: 580px;
-}
+                  {/* Bagian Bawah Kartu: Thumbnail Foto (Bisa Diganti) */}
+                  <div className="qz-card-image-box">
+                    <img
+                      src={item.image}
+                      alt={item.tag}
+                      className="qz-card-img"
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-/* 🟢 TOMBOL HIJAU MASUK SEKARANG */
-.qz-hero-action {
-  margin-top: 24px;
-}
+        {/* -------------------------------------------------------------------
+            4. SECTION "LET'S FIND A WAY" (Tab Guru / Administrator)
+        ------------------------------------------------------------------- */}
+        <section id="about" className="qz-container qz-audience-section">
+          <h2 className="qz-audience-heading">Let’s find a way</h2>
 
-.qz-green-login-btn {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 220px;
-  height: 56px;
-  background: linear-gradient(135deg, var(--qz-green-btn-1) 0%, var(--qz-green-btn-2) 100%);
-  border-radius: 9999px;
-  text-decoration: none;
-  box-shadow: 
-    0 10px 24px rgba(72, 183, 36, 0.42),
-    0 3px 8px rgba(0, 0, 0, 0.08),
-    inset 0 2px 4px rgba(255, 255, 255, 0.5);
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-}
+          {/* Toggle Tab Administrators | Teacher */}
+          <div className="qz-pill-tabs" role="tablist">
+            <button
+              type="button"
+              className={`qz-pill-btn ${activeTab === 'admin' ? 'active' : ''}`}
+              onClick={() => setActiveTab('admin')}
+              role="tab"
+              aria-selected={activeTab === 'admin'}
+            >
+              Administrators
+            </button>
+            <span className="qz-pill-divider">|</span>
+            <button
+              type="button"
+              className={`qz-pill-btn ${activeTab === 'teacher' ? 'active' : ''}`}
+              onClick={() => setActiveTab('teacher')}
+              role="tab"
+              aria-selected={activeTab === 'teacher'}
+            >
+              Theacer
+            </button>
+          </div>
 
-.qz-green-login-btn:hover {
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: 
-    0 14px 30px rgba(72, 183, 36, 0.55),
-    0 5px 12px rgba(0, 0, 0, 0.12),
-    inset 0 2px 4px rgba(255, 255, 255, 0.7);
-  background: linear-gradient(135deg, #7be83c 0%, #4ec927 100%);
-}
+          {/* Dua Kolom Konten */}
+          <div className="qz-audience-grid">
+            {/* Kolom Teks Kiri */}
+            <div className="qz-audience-text">
+              <h3 className="qz-audience-title">
+                {activeTab === 'admin'
+                  ? 'The platform educators teach on'
+                  : 'Empowering every student to achieve'}
+              </h3>
 
-.qz-green-login-btn:active {
-  transform: translateY(1px) scale(0.99);
-}
+              <div className="qz-audience-paragraphs">
+                <p>
+                  A place for activities, assessments, presentations videos, and
+                  flashcards with the AI and accommodations built in.
+                </p>
+                <p>
+                  Interactive slides, videos, flashcards, passages, and formative
+                  assessments. Every format teachers reach for without buying a
+                  separate tool for each.
+                </p>
+                <p>
+                  Every response, every data point, every accommodation feeds into
+                  the record. The picture of student outcomes stays whole instead of
+                  fragmented across platforms.
+                </p>
+                <p>
+                  Recover the budget, procurement overhead, and the training
+                  cycles when 5 tools consolidate into 1.
+                </p>
+                <p>
+                  Keep student engagement and rigor. The same activity students
+                  find joy in meets the standards districts need.
+                </p>
+              </div>
+            </div>
 
-.qz-green-btn-glow {
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 60%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.4) 50%,
-    rgba(255, 255, 255, 0) 100%
+            {/* Kolom Gambar Kanan: Foto Preview Edukasi (Bisa Diganti) */}
+            <div className="qz-audience-image-box">
+              <img
+                src={CONFIG_IMAGES.educatorPreview}
+                alt="Digital Learning Platform Preview"
+                className="qz-audience-img"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* -------------------------------------------------------------------
+            5. BOTTOM RIBBON WAVES (Pita Melengkung Merah & Kuning Emas)
+        ------------------------------------------------------------------- */}
+        <div className="qz-bottom-ribbons" aria-hidden="true">
+          <svg viewBox="0 0 1440 180" fill="none" preserveAspectRatio="none">
+            {/* Red Ribbon */}
+            <path
+              d="M0 120 C 350 160, 850 40, 1440 110 L 1440 180 L 0 180 Z"
+              fill="#b30919"
+            />
+            {/* Bright Red Ribbon */}
+            <path
+              d="M0 135 C 420 175, 920 60, 1440 130 L 1440 180 L 0 180 Z"
+              fill="#e52535"
+            />
+            {/* Golden Yellow Ribbon */}
+            <path
+              d="M0 155 C 480 190, 1000 80, 1440 150 L 1440 180 L 0 180 Z"
+              fill="#f5b324"
+            />
+          </svg>
+        </div>
+
+        {/* Footer Minimalis */}
+        <footer className="qz-footer">
+          <div className="qz-container qz-footer-inner">
+            <p>© {new Date().getFullYear()} QuisZoors. All rights reserved.</p>
+            <div className="qz-footer-links">
+              <Link to="/login">Masuk</Link>
+              <Link to="/register">Daftar</Link>
+              <a href="#features">Fitur</a>
+              <a href="#our-class">Kelas</a>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
   );
-  transform: skewX(-25deg);
-  animation: shineLoop 3.5s infinite;
 }
 
-@keyframes shineLoop {
-  0% { left: -100%; }
-  30% { left: 160%; }
-  100% { left: 160%; }
-}
-
-.qz-green-btn-text {
-  position: relative;
-  z-index: 2;
-  color: #ffffff;
-  font-size: 17.5px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
-}
-
-.qz-login-icon {
-  width: 20px;
-  height: 20px;
-}
-
-/* Right Hero: Big Emblem */
-.qz-hero-right {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-.qz-emblem-wrapper {
-  position: relative;
-  width: 100%;
-  max-width: 580px;
-  animation: floatEmblem 5s ease-in-out infinite alternate;
-}
-
-@keyframes floatEmblem {
-  0% { transform: translateY(0px) rotate(0deg); }
-  100% { transform: translateY(-10px) rotate(1.2deg); }
-}
-
-.qz-big-hero-logo {
-  width: 100%;
-  max-width: 580px;
-  height: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 20px 42px rgba(0, 0, 0, 0.25));
-}
-
-.qz-sparkle-star {
-  position: absolute;
-  top: 15px;
-  right: 40px;
-  color: #fce882;
-  font-size: 42px;
-  text-shadow: 0 0 18px rgba(245, 179, 36, 0.85);
-  animation: twinkle 2.5s infinite ease-in-out;
-  pointer-events: none;
-}
-
-@keyframes twinkle {
-  0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.9; }
-  50% { transform: scale(1.3) rotate(20deg); opacity: 1; }
-}
-
-/* Wave Divider */
-.qz-wave-divider {
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 100%;
-  line-height: 0;
-  overflow: hidden;
-  z-index: 5;
-}
-
-.qz-wave-divider svg {
-  display: block;
-  width: 100%;
-  height: 90px;
-}
-
-/* ==========================================================================
-   2. NAVY SECTION (Fitur, Our Class, Let's find a way)
-   ========================================================================== */
-.qz-navy-wrapper {
-  background: linear-gradient(180deg, var(--qz-navy-bg) 0%, var(--qz-navy-dark) 100%);
-  color: #ffffff;
-  padding: 30px 0 0 0;
-  position: relative;
-  overflow: hidden;
-}
-
-/* 3 Feature Circles */
-.qz-features-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 32px;
-  padding: 40px 24px;
-  text-align: center;
-}
-
-.qz-feature-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.qz-feature-badge {
-  width: 86px;
-  height: 86px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 18px;
-  background: rgba(13, 31, 61, 0.7);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-  transition: transform 0.3s ease;
-}
-
-.qz-feature-badge svg {
-  width: 40px;
-  height: 40px;
-}
-
-.qz-feature-item:hover .qz-feature-badge {
-  transform: translateY(-6px) scale(1.08);
-}
-
-.qz-badge-gold {
-  border: 2.5px solid var(--qz-primary-gold);
-  box-shadow: 0 0 20px rgba(245, 179, 36, 0.25);
-}
-
-.qz-badge-red {
-  border: 2.5px solid var(--qz-primary-red);
-  box-shadow: 0 0 20px rgba(229, 37, 53, 0.35);
-}
-
-.qz-feature-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: #ffffff;
-  margin-bottom: 8px;
-}
-
-.qz-feature-desc {
-  font-size: 13.5px;
-  line-height: 1.5;
-  color: rgba(220, 235, 255, 0.85);
-  max-width: 250px;
-}
-
-/* ==========================================================================
-   3. SECTION "OUR CLASS" (Box Rounded dengan 4 Kartu)
-   ========================================================================== */
-.qz-class-box {
-  margin-top: 40px;
-  border: 1.5px solid rgba(255, 255, 255, 0.22);
-  border-radius: 28px;
-  padding: 36px 32px 42px 32px;
-  background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(10px);
-}
-
-.qz-class-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: 28px;
-}
-
-.qz-class-heading {
-  font-size: clamp(28px, 3.2vw, 40px);
-  font-weight: 800;
-  color: #ffffff;
-  letter-spacing: -0.5px;
-}
-
-.qz-class-subtext {
-  text-align: right;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1.2px;
-  color: rgba(255, 255, 255, 0.7);
-  line-height: 1.6;
-}
-
-/* 4 Cards Grid */
-.qz-class-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-}
-
-.qz-card {
-  background: #f7f9fc;
-  color: #111827;
-  border-radius: 20px;
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: all 0.3s ease;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-}
-
-.qz-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
-  background: #ffffff;
-}
-
-.qz-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 12px;
-}
-
-.qz-card-tag {
-  font-size: 13px;
-  font-weight: 800;
-  color: #111827;
-  letter-spacing: 0.2px;
-}
-
-.qz-card-subtitle {
-  font-size: 11px;
-  color: #6b7280;
-  font-weight: 600;
-  margin-top: 2px;
-}
-
-.qz-card-arrow-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #0d1f3d;
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 15px;
-  font-weight: 700;
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-
-.qz-card-arrow-btn:hover {
-  background: var(--qz-primary-red);
-  transform: rotate(45deg);
-}
-
-.qz-card-desc {
-  font-size: 11.5px;
-  line-height: 1.5;
-  color: #4b5563;
-  margin-bottom: 16px;
-  min-height: 36px;
-}
-
-.qz-card-image-box {
-  width: 100%;
-  height: 120px;
-  border-radius: 14px;
-  overflow: hidden;
-  background: #e5e7eb;
-}
-
-.qz-card-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.4s ease;
-}
-
-.qz-card:hover .qz-card-img {
-  transform: scale(1.06);
-}
-
-/* ==========================================================================
-   4. SECTION "LET'S FIND A WAY" (Audience / Role Tab)
-   ========================================================================== */
-.qz-audience-section {
-  padding: 70px 24px 40px 24px;
-  text-align: center;
-}
-
-.qz-audience-heading {
-  font-size: clamp(30px, 3.8vw, 46px);
-  font-weight: 800;
-  color: #ffffff;
-  margin-bottom: 24px;
-  letter-spacing: -0.5px;
-}
-
-/* Segmented Pill Tabs */
-.qz-pill-tabs {
-  display: inline-flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 9999px;
-  padding: 4px;
-  margin-bottom: 48px;
-  backdrop-filter: blur(8px);
-}
-
-.qz-pill-btn {
-  background: transparent;
-  border: none;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 16px;
-  font-weight: 600;
-  padding: 10px 26px;
-  border-radius: 9999px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  font-family: inherit;
-}
-
-.qz-pill-btn.active {
-  background: rgba(255, 255, 255, 0.28);
-  color: #ffffff;
-  font-weight: 700;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.qz-pill-divider {
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 16px;
-  padding: 0 4px;
-}
-
-/* Two-column layout */
-.qz-audience-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  gap: 50px;
-  text-align: left;
-}
-
-.qz-audience-title {
-  font-size: clamp(20px, 2.2vw, 26px);
-  font-weight: 700;
-  color: #ffffff;
-  margin-bottom: 20px;
-}
-
-.qz-audience-paragraphs {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  font-size: 14px;
-  line-height: 1.68;
-  color: rgba(220, 235, 255, 0.88);
-}
-
-.qz-audience-image-box {
-  border-radius: 24px;
-  overflow: hidden;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
-  border: 2px solid rgba(255, 255, 255, 0.18);
-  background: #0b1a38;
-}
-
-.qz-audience-img {
-  width: 100%;
-  height: auto;
-  display: block;
-  object-fit: cover;
-}
-
-/* ==========================================================================
-   5. BOTTOM RIBBON WAVES & FOOTER
-   ========================================================================== */
-.qz-bottom-ribbons {
-  width: 100%;
-  line-height: 0;
-  margin-top: 40px;
-}
-
-.qz-bottom-ribbons svg {
-  display: block;
-  width: 100%;
-  height: 120px;
-}
-
-.qz-footer {
-  background: #081224;
-  padding: 24px 0 32px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.qz-footer-inner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.qz-footer-links {
-  display: flex;
-  gap: 20px;
-}
-
-.qz-footer-links a {
-  color: rgba(255, 255, 255, 0.7);
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.qz-footer-links a:hover {
-  color: var(--qz-primary-gold);
-}
-
-/* ==========================================================================
-   RESPONSIVE MEDIA QUERIES
-   ========================================================================== */
-@media (max-width: 1024px) {
-  .qz-class-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .qz-hero {
-    min-height: auto;
-    padding-bottom: 80px;
-  }
-
-  .qz-logo {
-    transform: none;
-  }
-
-  .qz-logo:hover {
-    transform: scale(1.05);
-  }
-
-  .qz-hero-grid {
-    grid-template-columns: 1fr;
-    text-align: center;
-    margin-top: 24px;
-    margin-bottom: 32px;
-  }
-
-  .qz-hero-left {
-    max-width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transform: none;
-  }
-
-  .qz-hero-desc {
-    max-width: 100%;
-  }
-
-  .qz-emblem-wrapper {
-    max-width: 300px;
-    margin: 20px auto 0 auto;
-  }
-
-  .qz-features-row {
-    grid-template-columns: 1fr;
-    gap: 36px;
-  }
-
-  .qz-class-header {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .qz-class-subtext {
-    text-align: left;
-  }
-
-  .qz-class-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .qz-audience-grid {
-    grid-template-columns: 1fr;
-    gap: 32px;
-  }
-
-  .qz-mobile-toggle {
-    display: block;
-  }
-
-  .qz-nav-menu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 24px;
-    right: 24px;
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 20px;
-    flex-direction: column;
-    gap: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    z-index: 50;
-  }
-
-  .qz-nav-menu--open {
-    display: flex;
-  }
-
-  .qz-footer-inner {
-    flex-direction: column;
-    gap: 12px;
-    text-align: center;
-  }
-}
+export default LandingPage;
