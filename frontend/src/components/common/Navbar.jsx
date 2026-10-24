@@ -1,50 +1,108 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import './Navbar.css';
 
-/**
- * 🎨 [Design UI] Navbar.jsx
- * Menu navigasi atas untuk Dashboard
- */
+//Menu navigasi atas untuk Dashboard
+
 export default function Navbar() {
   const { user, logout } = useAuth();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef(null);
+  const profileButtonRef = useRef(null);
+  const displayName = user?.name || user?.email || 'Pengguna';
+  const avatarSeed = encodeURIComponent(user?.name || user?.email || 'QuisZoors');
+  const avatarUrl = `https://api.dicebear.com/7.x/bottts/svg?seed=${avatarSeed}`;
+  const isFocusedWorkPage =
+    (pathname.startsWith('/classes/') && pathname !== '/classes/create') ||
+    pathname === '/quiz/add';
+
+  useEffect(() => {
+    if (!isProfileMenuOpen) return undefined;
+
+    const handlePointerDown = (event) => {
+      if (!profileMenuRef.current?.contains(event.target)) {
+        setIsProfileMenuOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setIsProfileMenuOpen(false);
+        profileButtonRef.current?.focus();
+      }
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isProfileMenuOpen]);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+  const handleLogout = () => {
+    logout();
+    setIsProfileMenuOpen(false);
+    navigate('/auth/login');
+  };
 
   return (
-    <header style={{
-      height: '64px',
-      backgroundColor: '#ffffff',
-      borderBottom: '1px solid #e2e8f0',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: '0 1.5rem',
-      position: 'sticky',
-      top: 0,
-      zIndex: 10
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <span style={{ fontWeight: 'bold', fontSize: '1.25rem', color: '#2563eb' }}>QuisZoors</span>
-      </div>
+    <header className={`app-navbar${isFocusedWorkPage ? ' app-navbar--focused' : ''}`}>
+      {isFocusedWorkPage ? (
+        <button
+          type="button"
+          className="app-navbar__home-button"
+          aria-label="Kembali ke Dashboard"
+          title="Kembali ke Dashboard"
+          onClick={() => navigate('/dashboard')}
+        >
+          <span aria-hidden="true" className="app-navbar__hamburger">
+            <span />
+            <span />
+            <span />
+          </span>
+        </button>
+      ) : (
+        <>
+          <span className="app-navbar__brand">QuisZoors</span>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-        {user && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.875rem' }}>
-            <span style={{ backgroundColor: '#fef3c7', color: '#d97706', padding: '0.25rem 0.75rem', borderRadius: '9999px', fontWeight: 'bold' }}>
-              ⭐ {user.points || 0} Poin
-            </span>
-            <span style={{ backgroundColor: '#e0e7ff', color: '#4338ca', padding: '0.25rem 0.75rem', borderRadius: '9999px', fontWeight: 'bold' }}>
-              Lv. {user.level || 1}
-            </span>
-            <span style={{ color: '#334155', fontWeight: '500' }}>{user.name || user.email}</span>
+          <div className="app-navbar__profile" ref={profileMenuRef}>
             <button
-              onClick={logout}
-              style={{ backgroundColor: '#ef4444', color: '#ffffff', padding: '0.4rem 0.8rem', borderRadius: '6px', fontSize: '0.8rem' }}
+              type="button"
+              ref={profileButtonRef}
+              className="app-navbar__profile-trigger"
+              aria-label={`Buka menu profil ${displayName}`}
+              aria-expanded={isProfileMenuOpen}
+              aria-haspopup="true"
+              onClick={() => setIsProfileMenuOpen((isOpen) => !isOpen)}
             >
-              Logout
+              <img className="app-navbar__avatar" src={avatarUrl} alt="" />
+              <span className="app-navbar__profile-name">{displayName}</span>
+              <span className="app-navbar__profile-chevron" aria-hidden="true">▾</span>
             </button>
+
+            {isProfileMenuOpen && (
+              <div className="app-navbar__profile-menu" aria-label="Menu profil">
+                <span className="app-navbar__menu-username">{displayName}</span>
+                <button type="button" disabled className="app-navbar__menu-item">
+                  Pengaturan
+                </button>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="app-navbar__menu-item app-navbar__menu-item--logout"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </>
+      )}
     </header>
   );
 }
