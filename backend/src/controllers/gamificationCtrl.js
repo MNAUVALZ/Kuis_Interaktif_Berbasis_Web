@@ -16,7 +16,14 @@ exports.addPoints = async (userId, points) => {
 
 exports.getProfile = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user._id).select('-password');
+    const user = await User.findById(req.user._id)
+      .select('-password')
+      .populate('ownedCharacters');
+
+    if (!user) {
+      return res.status(404).json({ message: 'Pengguna tidak ditemukan' });
+    }
+
     res.json(user);
   } catch (err) {
     next(err);
